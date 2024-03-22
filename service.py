@@ -53,11 +53,11 @@ class VLLM:
     def root(self):
         return fastapi.responses.HTMLResponse(ROOT_TEMPLATE)
 
-    @app.get("model_card")
+    @app.get("/model_card")
     def model_card(self):
         return fastapi.responses.JSONResponse(
             {
-                "model_id": MODEL_ID,
+                "model_id": self.bento_model_ref.tag.name,
                 "description": "OpenAI's GPT-3 model fine-tuned on the OpenWebText dataset",
                 "license": "MIT",
                 "author": "OpenAI",
