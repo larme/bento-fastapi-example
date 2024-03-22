@@ -8,8 +8,6 @@ from typing_extensions import Annotated
 
 MAX_TOKENS = 512
 MODEL_ID = "facebook/opt-350m"
-BENTO_MODEL_TAG = MODEL_ID.lower().replace("/", "--")
-
 
 app = fastapi.FastAPI()
 
@@ -22,13 +20,11 @@ app = fastapi.FastAPI()
 )
 class VLLM:
 
-    bento_model_ref = bentoml.models.get(BENTO_MODEL_TAG)
-
     def __init__(self) -> None:
         from vllm import AsyncEngineArgs, AsyncLLMEngine
 
         ENGINE_ARGS = AsyncEngineArgs(
-            model=self.bento_model_ref.path, max_model_len=MAX_TOKENS
+            model=MODEL_ID, max_model_len=MAX_TOKENS
         )
 
         self.engine = AsyncLLMEngine.from_engine_args(ENGINE_ARGS)
@@ -57,7 +53,7 @@ class VLLM:
     def model_card(self):
         return fastapi.responses.JSONResponse(
             {
-                "model_id": self.bento_model_ref.tag.name,
+                "model_id": MODEL_ID,
                 "description": "OpenAI's GPT-3 model fine-tuned on the OpenWebText dataset",
                 "license": "MIT",
                 "author": "OpenAI",
